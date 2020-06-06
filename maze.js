@@ -3,8 +3,10 @@
 // Initialize the canvas
 let maze = document.querySelector(".maze");
 let ctx = maze.getContext("2d");
+let generationComplete = false;
 
 let current;
+let goal;
 
 class Maze {
   constructor(size, rows, columns) {
@@ -28,13 +30,14 @@ class Maze {
     }
     // Set the starting grid
     current = this.grid[0][0];
+    this.grid[this.rows - 1][this.columns - 1].goal = true;
   }
 
   // Draw the canvas by setting the size and placing the cells in the grid array on the canvas.
   draw() {
     maze.width = this.size;
     maze.height = this.size;
-    maze.style.background = "#232323";
+    maze.style.background = "black";
     // Set the first cell as visited
     current.visited = true;
     // Loop through the 2d grid array and call the show method for each cell instance
@@ -67,6 +70,7 @@ class Maze {
     }
     // If no more items in the stack then all cells have been visted and the function can be exited
     if (this.stack.length === 0) {
+      generationComplete = true;
       return;
     }
 
@@ -74,7 +78,7 @@ class Maze {
     window.requestAnimationFrame(() => {
       this.draw();
     });
-    //     setTimeout(() => {
+    //     setTimeout(() => {rd
     //       this.draw();
     //     }, 10);
   }
@@ -92,6 +96,7 @@ class Cell {
       bottomWall: true,
       leftWall: true,
     };
+    this.goal = false;
     // parentGrid is passed in to enable the checkneighbours method.
     // parentSize is passed in to set the size of each cell on the grid
     this.parentGrid = parentGrid;
@@ -157,10 +162,16 @@ class Cell {
 
   // Highlights the current cell on the grid. Columns is once again passed in to set the size of the grid.
   highlight(columns) {
-    let x = (this.colNum * this.parentSize) / columns;
-    let y = (this.rowNum * this.parentSize) / columns;
+    // Additions and subtractions added so the highlighted cell does cover the walls
+    let x = (this.colNum * this.parentSize) / columns + 1;
+    let y = (this.rowNum * this.parentSize) / columns + 1;
     ctx.fillStyle = "purple";
-    ctx.fillRect(x, y, this.parentSize / columns, this.parentSize / columns);
+    ctx.fillRect(
+      x,
+      y,
+      this.parentSize / columns - 3,
+      this.parentSize / columns - 3
+    );
   }
 
   removeWalls(cell1, cell2) {
@@ -200,12 +211,15 @@ class Cell {
     if (this.walls.bottomWall) this.drawBottomWall(x, y, size, columns, rows);
     if (this.walls.leftWall) this.drawLeftWall(x, y, size, columns, rows);
     if (this.visited) {
-      ctx.fillRect(x, y, size / columns, size / rows);
-      //   ctx.strokeRect(x, y, size / columns, size / rows);
+      ctx.fillRect(x + 1, y + 1, size / columns - 2, size / rows - 2);
+    }
+    if (this.goal) {
+      ctx.fillStyle = "rgb(83, 247, 43)";
+      ctx.fillRect(x + 1, y + 1, size / columns - 2, size / rows - 2);
     }
   }
 }
 
-let newMaze = new Maze(600, 50, 50);
-newMaze.setup();
-newMaze.draw();
+// let newMaze = new Maze(600, 50, 50);
+// newMaze.setup();
+// newMaze.draw();
