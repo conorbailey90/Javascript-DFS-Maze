@@ -6,6 +6,10 @@
   color: #ffffff;
 }
 
+body {
+  background-color: #fbf9f9;
+}
+
 .maze {
   position: absolute;
   left: 50%;
@@ -64,4 +68,13 @@ input {
   padding: 2rem;
   text-align: center;
   border-radius: 10px;
+}
+
+.title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 10%;
+  color: #000000;
+  font-family: "Bungee Inline", cursive;
 }
